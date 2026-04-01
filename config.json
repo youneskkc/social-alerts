@@ -1,0 +1,33 @@
+{
+  "keywords": [
+    "دار نشر عربية",
+    "دار نشر",
+    "كتاب جديد",
+    "إصدار جديد",
+    "معرض كتاب",
+    "صدر حديثا",
+    "إصدارات حديثة",
+    "معرض الكتاب",
+    "رواية جديدة",
+    "كتاب صدر",
+    "new arabic book",
+    "arabic publisher"
+  ],
+  "sources": {
+    "bluesky": {
+      "enabled": true,
+      "api": "https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts",
+      "limit_per_query": 30
+    },
+    "mastodon": {
+      "enabled": true,
+      "instances": [
+        "https://mastodon.social",
+        "https://mstdn.social",
+        "https://mas.to",
+        "https://mastodon.online"
+      ],
+      "limit_per_query": 20
+    }
+  }
+}

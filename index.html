@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تنبيهات اجتماعية</title>
+<style>
+:root {
+  --bg: #fafaf9;
+  --fg: #1c1917;
+  --muted: #78716c;
+  --border: #e7e5e4;
+  --accent: #292524;
+  --card-bg: #ffffff;
+  --hover: #f5f5f4;
+  --tag-bg: #f5f5f4;
+  --bsky: #0085ff;
+  --masto: #6364ff;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0c0a09; --fg: #fafaf9; --muted: #a8a29e; --border: #292524;
+    --accent: #e7e5e4; --card-bg: #1c1917; --hover: #292524; --tag-bg: #1c1917;
+    --bsky: #4da6ff; --masto: #9b9bff;
+  }
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, 'Segoe UI', 'SF Pro Arabic', 'Noto Sans Arabic', system-ui, sans-serif;
+  background: var(--bg); color: var(--fg); line-height: 1.7; -webkit-font-smoothing: antialiased;
+}
+.container { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border);
+}
+header h1 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.02em; }
+.header-meta { display: flex; align-items: center; gap: 1rem; }
+.last-updated { font-size: 0.8rem; color: var(--muted); }
+.refresh-btn {
+  background: none; border: 1px solid var(--border); color: var(--fg);
+  padding: 0.4rem 0.9rem; border-radius: 6px; cursor: pointer;
+  font-size: 0.8rem; font-family: inherit; transition: background 0.15s;
+}
+.refresh-btn:hover { background: var(--hover); }
+
+.stats-bar {
+  display: flex; gap: 1.5rem; margin-bottom: 1.5rem;
+  font-size: 0.82rem; color: var(--muted);
+}
+.stats-bar strong { color: var(--fg); }
+
+.filters {
+  display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem;
+}
+.filter-btn {
+  padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.76rem;
+  background: var(--tag-bg); color: var(--muted); border: 1px solid var(--border);
+  cursor: pointer; transition: all 0.15s; font-family: inherit; white-space: nowrap;
+}
+.filter-btn:hover, .filter-btn.active {
+  background: var(--accent); color: var(--bg); border-color: var(--accent);
+}
+.filter-btn.bsky.active { background: var(--bsky); border-color: var(--bsky); }
+.filter-btn.masto.active { background: var(--masto); border-color: var(--masto); }
+
+.search-box {
+  width: 100%; padding: 0.6rem 1rem; border: 1px solid var(--border);
+  border-radius: 8px; font-size: 0.88rem; font-family: inherit;
+  background: var(--card-bg); color: var(--fg); margin-bottom: 2rem; outline: none;
+}
+.search-box:focus { border-color: var(--accent); }
+.search-box::placeholder { color: var(--muted); }
+
+.post {
+  padding: 1rem 0; border-bottom: 1px solid var(--border);
+  display: block; text-decoration: none; color: inherit; transition: background 0.1s;
+}
+.post:last-child { border-bottom: none; }
+
+.post-header { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.4rem; }
+.post-avatar {
+  width: 32px; height: 32px; border-radius: 50%; object-fit: cover;
+  background: var(--tag-bg);
+}
+.post-author-info { flex: 1; min-width: 0; }
+.post-author { font-size: 0.85rem; font-weight: 600; }
+.post-handle { font-size: 0.75rem; color: var(--muted); }
+
+.post-platform {
+  font-size: 0.65rem; padding: 0.15rem 0.5rem; border-radius: 10px;
+  font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em;
+}
+.post-platform.bluesky { background: var(--bsky); color: white; }
+.post-platform.mastodon { background: var(--masto); color: white; }
+
+.post-text {
+  font-size: 0.9rem; line-height: 1.7; margin-bottom: 0.4rem;
+  display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;
+}
+
+.post-meta {
+  display: flex; gap: 1rem; font-size: 0.73rem; color: var(--muted); align-items: center;
+}
+.post-keyword {
+  background: var(--tag-bg); padding: 0.1rem 0.5rem; border-radius: 10px;
+  font-size: 0.7rem; border: 1px solid var(--border);
+}
+
+.empty-state { text-align: center; padding: 4rem 1rem; color: var(--muted); font-size: 0.9rem; }
+
+footer {
+  margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border);
+  text-align: center; font-size: 0.75rem; color: var(--muted);
+}
+footer a { color: var(--fg); text-decoration: underline; }
+
+@media (max-width: 640px) {
+  .container { padding: 1.2rem 1rem; }
+  header { flex-direction: column; align-items: flex-start; gap: 0.8rem; }
+  .header-meta { width: 100%; justify-content: space-between; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>تنبيهاتي</h1>
+    <div class="header-meta">
+      <span class="last-updated" id="lastUpdated"></span>
+      <button class="refresh-btn" id="refreshBtn" onclick="refreshData()">تحديث</button>
+    </div>
+  </header>
+
+  <div class="stats-bar" id="stats"></div>
+
+  <div class="filters" id="filters"></div>
+
+  <input type="search" class="search-box" id="searchBox" placeholder="ابحث في المنشورات..." oninput="renderPosts()">
+
+  <div id="content"></div>
+
+  <footer>
+    تطوير <a href="https://youdo.blog" target="_blank" rel="noopener">يونس بن عمارة</a>
+    بواسطة <a href="https://mulerun.com/invitation/6GFMGQ38KYJ4" target="_blank" rel="noopener">mulerun.com</a>
+  </footer>
+</div>
+<script>
+let DATA = null;
+let activePlatform = null;
+let activeKeyword = null;
+
+async function loadData() {
+  try {
+    const resp = await fetch('data.json?t=' + Date.now());
+    DATA = await resp.json();
+    render();
+  } catch (e) {
+    document.getElementById('content').innerHTML = '<div class="empty-state">تعذر تحميل البيانات</div>';
+  }
+}
+
+function timeAgo(isoStr) {
+  if (!isoStr) return '';
+  const now = new Date();
+  const then = new Date(isoStr);
+  const diff = Math.floor((now - then) / 1000);
+  if (diff < 60) return 'الآن';
+  if (diff < 3600) return Math.floor(diff / 60) + ' د';
+  if (diff < 86400) return Math.floor(diff / 3600) + ' س';
+  if (diff < 604800) return Math.floor(diff / 86400) + ' ي';
+  return then.toLocaleDateString('ar');
+}
+
+function escHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function render() {
+  if (!DATA) return;
+
+  // Stats
+  const stats = DATA.platformStats || {};
+  const total = DATA.totalPosts || 0;
+  let statsHtml = `<div><strong>${total}</strong> منشور</div>`;
+  if (stats.bluesky) statsHtml += `<div style="color:var(--bsky)">Bluesky: <strong>${stats.bluesky}</strong></div>`;
+  if (stats.mastodon) statsHtml += `<div style="color:var(--masto)">Mastodon: <strong>${stats.mastodon}</strong></div>`;
+  if (DATA.newPosts) statsHtml += `<div><strong>${DATA.newPosts}</strong> جديد</div>`;
+  document.getElementById('stats').innerHTML = statsHtml;
+
+  // Last updated
+  if (DATA.lastUpdated) {
+    const d = new Date(DATA.lastUpdated);
+    document.getElementById('lastUpdated').textContent =
+      'آخر تحديث: ' + d.toLocaleString('ar', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' });
+  }
+
+  // Filters
+  const keywords = Object.keys(DATA.byKeyword || {});
+  let filterHtml = `<button class="filter-btn ${!activePlatform && !activeKeyword ? 'active' : ''}" onclick="setFilter(null,null)">الكل</button>`;
+  filterHtml += `<button class="filter-btn bsky ${activePlatform==='bluesky'?'active':''}" onclick="setFilter('bluesky',null)">Bluesky</button>`;
+  filterHtml += `<button class="filter-btn masto ${activePlatform==='mastodon'?'active':''}" onclick="setFilter('mastodon',null)">Mastodon</button>`;
+  filterHtml += '<span style="width:0.5rem"></span>';
+  keywords.forEach(kw => {
+    const count = (DATA.byKeyword[kw] || []).length;
+    const isActive = activeKeyword === kw ? 'active' : '';
+    filterHtml += `<button class="filter-btn ${isActive}" onclick="setFilter(null,'${escHtml(kw)}')">${escHtml(kw)} <span style="opacity:0.6;font-size:0.65rem">${count}</span></button>`;
+  });
+  document.getElementById('filters').innerHTML = filterHtml;
+
+  renderPosts();
+}
+
+function renderPosts() {
+  if (!DATA) return;
+  const query = (document.getElementById('searchBox').value || '').trim().toLowerCase();
+  let posts = DATA.posts || [];
+
+  if (activePlatform) posts = posts.filter(p => p.platform === activePlatform);
+  if (activeKeyword) posts = posts.filter(p => p.keyword === activeKeyword);
+  if (query) posts = posts.filter(p =>
+    (p.text || '').toLowerCase().includes(query) ||
+    (p.author || '').toLowerCase().includes(query) ||
+    (p.handle || '').toLowerCase().includes(query)
+  );
+
+  if (posts.length === 0) {
+    document.getElementById('content').innerHTML = '<div class="empty-state">لا توجد منشورات مطابقة</div>';
+    return;
+  }
+
+  let html = '';
+  posts.forEach(post => {
+    const avatarHtml = post.avatar
+      ? `<img class="post-avatar" src="${escHtml(post.avatar)}" alt="" loading="lazy" onerror="this.style.display='none'">`
+      : '<div class="post-avatar"></div>';
+    const platformClass = post.platform || '';
+    const platformLabel = post.platform === 'bluesky' ? 'Bsky' : post.platform === 'mastodon' ? 'Masto' : post.platform;
+
+    html += `<a class="post" href="${escHtml(post.url || '#')}" target="_blank" rel="noopener">
+      <div class="post-header">
+        ${avatarHtml}
+        <div class="post-author-info">
+          <div class="post-author">${escHtml(post.author || '')}</div>
+          <div class="post-handle">${escHtml(post.handle || '')}</div>
+        </div>
+        <span class="post-platform ${platformClass}">${platformLabel}</span>
+      </div>
+      <div class="post-text">${escHtml(post.text || '')}</div>
+      <div class="post-meta">
+        <span>${timeAgo(post.date)}</span>
+        ${post.likes ? `<span>${post.likes} إعجاب</span>` : ''}
+        ${post.reposts ? `<span>${post.reposts} مشاركة</span>` : ''}
+        <span class="post-keyword">${escHtml(post.keyword || '')}</span>
+      </div>
+    </a>`;
+  });
+
+  document.getElementById('content').innerHTML = html;
+}
+
+function setFilter(platform, keyword) {
+  activePlatform = platform;
+  activeKeyword = keyword;
+  render();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+async function refreshData() {
+  const btn = document.getElementById('refreshBtn');
+  btn.style.opacity = '0.5';
+  btn.textContent = 'جاري...';
+  await loadData();
+  btn.style.opacity = '1';
+  btn.textContent = 'تحديث';
+}
+
+loadData();
+</script>
+</body>
+</html>
